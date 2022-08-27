@@ -1,20 +1,37 @@
 
+const http = require("http");
 
-let myhttp = require("http");
-myhttp.createServer(
-  function(myrequest, myresponse) {
-    console.log(myrequest.url);
-    let mytext;
-    if (myreuqest.url === "/hey") {
-      let mytext = "Well hello there...";
-    }
-    else {
-      let mytext = "i dont know you!";
+const fs = require('fs').promises;
 
-    }
-    myresponse.writeHead(200, { "Content-type": "text/plain" });
-    myresponse.end("hello Everyone!\n");
+const requestListener = function (req, res) {
+  console.log(req.url);
+
+  if (req.url === "/") {
+    fs.readFile(__dirname + "/home.html")
+      .then(contents => {
+        res.setHeader("Content-Type", "text/html; charset=UTF-8");
+        res.writeHead(200);
+        res.end(contents);
+      });
+  } else {
+    fs.readFile(__dirname + "/page.json")
+      .then(contents => {
+        res.setHeader("Content-Type", "application/json; charset=UTF-8");
+        res.writeHead(200);
+        res.end(contents);
+      });
+
+  }
+  
+};
+
+const server = http.createServer(requestListener);
+
+const host = "0.0.0.0";
+const port = "8080";
+
+server.listen(
+  port, host, () => {
+    console.log(`Server is running on http://${host}:${port}`);
   }
 );
-myserver.listen(8080, "0.0.0.0");
-console.log("server has started");
